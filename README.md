@@ -237,6 +237,34 @@ docker run -d -p 8080:8080 my-flask-app
 **실행 결과**
 - `http://localhost:8080` → "안녕하세요! 제 첫 웹서버예요! 🎉"
 - `http://localhost:8080/hello` → "Hello, Docker! 🐳"
+
+**실행 로그**
+asdfg7789@JINU:/mnt/c/Users/asdfg/Desktop/코디세이/E1-1$ docker build -t my-flask-app .
+[+] Building 3.1s (9/9) FINISHED                          docker:default
+ => [internal] load build definition from Dockerfile                0.1s
+ => => transferring dockerfile: 159B                                0.0s
+ => [internal] load metadata for docker.io/library/python:3.12      1.3s
+ => [internal] load .dockerignore                                   0.1s
+ => => transferring context: 2B                                     0.0s
+ => [1/4] FROM docker.io/library/python:3.12@sha256:5ff8100ae55a3b  0.1s
+ => => resolve docker.io/library/python:3.12@sha256:5ff8100ae55a3b  0.1s
+ => [internal] load build context                                   0.3s
+ => => transferring context: 177.09kB                               0.3s
+ => CACHED [2/4] WORKDIR /app                                       0.0s
+ => CACHED [3/4] RUN pip install flask                              0.0s
+ => [4/4] COPY . .                                                  0.2s
+ => exporting to image                                              0.8s
+ => => exporting layers                                             0.3s
+ => => exporting manifest sha256:b4caf6c4e3ad0a9b7fa29ee570a468c2c  0.1s
+ => => exporting config sha256:2e39d5244bdc9eee8dcb8e4542433b8e7db  0.1s
+ => => exporting attestation manifest sha256:16de38793b2c7956ab018  0.1s
+ => => exporting manifest list sha256:28e2e4cb030aaf8505c8ac60745c  0.1s
+ => => naming to docker.io/library/my-flask-app:latest              0.0s
+ => => unpacking to docker.io/library/my-flask-app:latest           0.1s
+asdfg7789@JINU:/mnt/c/Users/asdfg/Desktop/코디세이/E1-1$ docker run -d -p 8080:8080 my-flask-app
+b9fb2c0705601fd212b1baa99a50f4b022edb3949934aabe6c7f3065db17eac4
+asdfg7789@JINU:/mnt/c/Users/asdfg/Desktop/코디세이/E1-1$ 
+
 ---
 
 ## 7. 포트 매핑 접속 증거
