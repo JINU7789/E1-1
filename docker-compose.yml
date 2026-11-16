@@ -1,0 +1,19 @@
+# ─────────────────────────────────────────────────────────────
+# 보너스 과제: Docker Compose 로 단일 서비스 실행
+#   실행:  docker compose up -d --build
+#   상태:  docker compose ps
+#   로그:  docker compose logs -f
+#   종료:  docker compose down
+# ─────────────────────────────────────────────────────────────
+services:
+  web:
+    build: .
+    image: my-web:1.0
+    container_name: my-web-compose
+    ports:
+      - "8080:80"          # host:container 포트 매핑
+    environment:
+      - APP_ENV=${APP_ENV:-dev}   # 환경 변수 주입 (설정과 코드 분리)
+    volumes:
+      - ./site:/usr/share/nginx/html:ro   # 바인드 마운트 (변경 즉시 반영, 읽기 전용)
+    restart: unless-stopped
