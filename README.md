@@ -56,53 +56,60 @@ dev-workstation/
 - [x] Docker 볼륨 영속성 확인 (컨테이너 삭제 전/후)
 - [x] Git 사용자/기본 브랜치 설정 + `git config --list`
 - [x] GitHub 저장소 연동 및 push
-- [ ] 터미널 기본 조작 및 폴더 구성 로그 정리  ⬜ 남은 작업
-- [ ] 파일/디렉토리 권한 변경 실습 (변경 전/후 비교)  ⬜ 남은 작업
+- [x] 터미널 기본 조작 및 폴더 구성 로그 정리
+- [x] 파일/디렉토리 권한 변경 실습 (변경 전/후 비교)
+- [x] ubuntu 컨테이너 진입 및 attach/exec 관찰
 
 ---
 
-## 4) 터미널 조작 로그  ⬜ (남은 작업)
+## 4) 터미널 조작 로그
 
-> 아래 명령을 실행하고 **입력 + 출력**을 남기세요.
+현재 위치 확인, 생성/이동, 복사, 이름변경, 삭제, 내용 확인을 수행했다.
 
 ```bash
-pwd
-mkdir -p ~/codyssey/practice && cd ~/codyssey/practice
-ls -la
-touch sample.txt
-cp sample.txt sample_copy.txt
-mv sample_copy.txt renamed.txt
-rm renamed.txt
-echo "hello codyssey" > sample.txt
-cat sample.txt
-```
-```text
-# 출력 ↓
-<!-- 붙여넣기 -->
+$ cd ~
+$ mkdir practice
+$ cd practice
+$ ls -la
+total 8
+drwxr-xr-x 2 developer developer 4096 Nov 16 19:28 .
+drwxr-x--- 8 developer developer 4096 Nov 16 19:28 ..
+$ touch sample.txt                  # 빈 파일 생성
+$ cp sample.txt sample_copy.txt     # 복사
+$ mv sample_copy.txt renamed.txt    # 이름변경
+$ rm renamed.txt                    # 삭제
+$ echo "hello codyssey" > sample.txt
+$ cat sample.txt                    # 내용 확인
+hello codyssey
 ```
 
 ---
 
-## 5) 권한(Permission) 실습  ⬜ (남은 작업)
+## 5) 권한(Permission) 실습
+
+파일 1개, 디렉토리 1개에 대해 권한을 변경하고 전/후를 비교했다.
 
 ```bash
-touch perm_file.txt
-mkdir perm_dir
-ls -l perm_file.txt ; ls -ld perm_dir      # 변경 전
-chmod 644 perm_file.txt
-chmod 755 perm_dir
-ls -l perm_file.txt ; ls -ld perm_dir      # 변경 후
+$ chmod 600 perm_file.txt ; chmod 700 perm_dir       # (의도적으로 다른 값에서 시작)
+$ echo "=== 변경 전 ===" ; ls -l perm_file.txt ; ls -ld perm_dir
+=== 변경 전 ===
+-rw------- 1 developer developer    0 Nov 16 19:33 perm_file.txt
+drwx------ 2 developer developer 4096 Nov 16 19:33 perm_dir
+$ chmod 644 perm_file.txt ; chmod 755 perm_dir
+$ echo "=== 변경 후 ===" ; ls -l perm_file.txt ; ls -ld perm_dir
+=== 변경 후 ===
+-rw-r--r-- 1 developer developer    0 Nov 16 19:33 perm_file.txt
+drwxr-xr-x 2 developer developer 4096 Nov 16 19:33 perm_dir
 ```
 
-| 대상 | 변경 후 | 의미 |
-|------|---------|------|
-| `perm_file.txt` | `-rw-r--r--` (644) | 소유자 읽기/쓰기, 그 외 읽기 |
-| `perm_dir` | `drwxr-xr-x` (755) | 소유자 전체, 그 외 읽기/실행 |
+| 대상 | 변경 전 | 변경 후 | 의미 |
+|------|---------|---------|------|
+| `perm_file.txt` | `rw-------` (600) | `-rw-r--r--` (644) | 소유자 읽기·쓰기 / 그 외 읽기 |
+| `perm_dir` | `rwx------` (700) | `drwxr-xr-x` (755) | 소유자 전체 / 그 외 읽기·실행 |
 
-```text
-# 출력 ↓ (변경 전/후 ls 결과)
-<!-- 붙여넣기 -->
-```
+> 권한값은 r=4·w=2·x=1의 합. 644=rw/r/r, 755=rwx/rx/rx. 디렉토리는 안으로 들어가려면 `x`가 필요해 755를 쓴다.
+
+> 변경 전(`rw-------`/`rwx------`)과 변경 후(`rw-r--r--`/`rwxr-xr-x`)가 달라진 것을 확인했다.
 
 ---
 
@@ -146,21 +153,36 @@ docker run hello-world
 ```
 ![hello-world](docs/images/08-hello-world.png)
 
-### 8-2. ubuntu 진입 후 명령  ⬜ (남은 작업)
+### 8-2. ubuntu 진입 후 명령
 ```bash
-docker run -it ubuntu bash
-#  내부에서:  ls / ; echo "inside container" ; exit
+$ docker run -it ubuntu bash
+root@a9720797595b:/# ls /
+bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+root@a9720797595b:/# echo "inside container"
+inside container
+root@a9720797595b:/# cat /etc/os-release | head -2
+PRETTY_NAME="Ubuntu 26.04.1 LTS"
+NAME="Ubuntu"
+root@a9720797595b:/# exit
 ```
-```text
-# 출력 ↓
-<!-- 붙여넣기 -->
-```
-> 참고: 11-2) 볼륨 실습에서 ubuntu 컨테이너를 `docker exec`로 다뤘습니다.
 
-### 8-3. attach vs exec / 종료·유지 차이  ⬜ (남은 작업)
-- `docker run -it ... bash` 에서 `exit` → ⬜
-- `docker run -d ...` 후 `docker exec -it ... bash` 에서 `exit` → ⬜
-- 관찰 요약: ⬜
+### 8-3. attach vs exec / 종료·유지 차이
+```bash
+# run -it 의 메인 프로세스(bash)를 exit → 컨테이너 종료
+$ docker ps -a | head
+CONTAINER ID   IMAGE         COMMAND    STATUS
+a9720797595b   ubuntu        "bash"     Exited (0) 7 seconds ago     wizardly_hypatia
+
+# 백그라운드 컨테이너는 exec 로 들어갔다 나와도 유지
+$ docker run -d --name tmp ubuntu sleep infinity
+$ docker exec -it tmp bash        # 들어가서 exit
+$ docker ps | grep tmp            # (호스트에서) 여전히 Up 상태
+073b6ab63551   ubuntu   "sleep infinity"   Up 8 minutes   tmp
+$ docker rm -f tmp                # 정리
+tmp
+```
+
+**관찰 요약**: 컨테이너는 "메인 프로세스가 살아있는 동안"만 유지된다. `docker run -it`의 메인 프로세스인 bash를 `exit`하면 컨테이너가 종료되지만(`Exited`), `sleep infinity`로 떠 있는 컨테이너에 `docker exec`로 들어가 연 쉘을 `exit`하면 그 쉘만 끝나고 컨테이너는 계속 Up 상태를 유지한다. (`docker ps`/`docker rm` 같은 호스트 명령은 컨테이너 내부가 아니라 호스트 터미널에서 실행해야 한다.)
 
 ---
 
@@ -300,14 +322,19 @@ git push -u origin main
 
 ---
 
-## 14) 학습 목표 자가 점검  ⬜ (본인 말로 채우기)
+## 14) 학습 목표 자가 점검
 
-1. **절대 경로 vs 상대 경로** — ⬜
-2. **파일 권한 r/w/x 와 755·644 해석** — ⬜
-3. **기존 Dockerfile 기반 커스텀 이미지 만들기** — ⬜
-4. **포트 매핑이 필요한 이유** — ⬜
-5. **Docker 볼륨(영속 데이터)** — ⬜
-6. **Git vs GitHub (로컬 버전관리 vs 원격 협업)** — ⬜
+1. **절대 경로 vs 상대 경로**: 절대 경로는 루트(`/`)부터 전체 위치를 적어 어디서 실행하든 같은 곳을 가리킨다(예: `/home/developer/myproject`). 상대 경로는 현재 위치 기준이다(현재 폴더의 `site/index.html`, 상위로 가는 `../`). 스크립트의 이식성을 위해 상황에 맞게 사용한다.
+
+2. **파일 권한 r/w/x 와 755·644 해석**: 권한은 소유자/그룹/기타 3묶음이며 r=4·w=2·x=1의 합으로 표기한다. 644 = `rw-(6)/r--(4)/r--(4)`, 755 = `rwx(7)/r-x(5)/r-x(5)`. 파일은 보통 644, 디렉토리와 실행 파일은 진입·실행에 `x`가 필요해 755를 준다. (5번 실습에서 600→644, 700→755로 직접 확인)
+
+3. **기존 Dockerfile 기반 커스텀 이미지 만들기**: `FROM nginx:alpine`처럼 공식 베이스 이미지를 출발점으로 삼아 `COPY`로 내 정적 콘텐츠를 넣고 `ENV`·`LABEL`·`HEALTHCHECK`를 추가한 뒤 `docker build -t my-web:1.0 .`로 내 이미지를 만들었다. 베이스를 재사용하므로 처음부터 만들 필요가 없다.
+
+4. **포트 매핑이 필요한 이유**: 컨테이너는 격리돼 있어 내부 포트(80)가 호스트에서 바로 보이지 않는다. `-p 8080:80`으로 호스트 8080 → 컨테이너 80을 연결해야 브라우저로 접속할 수 있다. 호스트 포트만 바꾸면 같은 이미지를 여러 개 동시에 띄울 수 있다(8080·8081에서 확인).
+
+5. **Docker 볼륨(영속 데이터)**: 컨테이너를 삭제하면 내부 데이터는 사라지지만, 볼륨(`mydata`)에 저장한 데이터는 컨테이너와 분리돼 유지된다. 컨테이너를 지우고 새로 만들어 같은 볼륨을 붙여도 `hi`가 그대로 남아있음을 확인했다. 데이터와 실행 환경을 분리하는 수단이다.
+
+6. **Git vs GitHub**: Git은 내 컴퓨터에서 변경 이력을 관리하는 버전관리 도구(로컬 커밋)이고, GitHub는 그 저장소를 원격에 올려 공유·협업하는 플랫폼이다. `git commit`은 로컬 기록, `git push`는 GitHub 원격으로 올리는 작업이다.
 
 ---
 
