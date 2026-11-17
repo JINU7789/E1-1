@@ -299,7 +299,7 @@ git push -u origin main
 > 보안: 토큰/비밀번호 등 민감정보는 로그·스크린샷에 포함하지 않았습니다.
 
 ### VSCode ↔ GitHub 연동  ⬜ (남은 작업)
-![github vscode](docs/images/14-github-vscode.png)
+![github vscode](docs/images/14-github-vscode.png.pug)
 > ⬜ VSCode에서 GitHub 로그인 + 저장소 연동 화면을 캡처해 `docs/images/12-github-vscode.png`로 저장하세요.
 
 ---
